@@ -3,13 +3,10 @@ package burp;
 import java.awt.Component;
 import java.util.List;
 
-import javax.swing.JLabel;
-
-import burp.IMessageEditorController;
-import burp.IMessageEditorTab;
 import ca.zhack.endpointfinder.EndpointEntry;
 import ca.zhack.endpointfinder.EndpointFinder;
 import ca.zhack.endpointfinder.EndpointResult;
+import ca.zhack.endpointfinder.Position;
 
 public class TabResults implements IMessageEditorTab {
 	private ITextEditor displayContent;
@@ -73,15 +70,31 @@ public class TabResults implements IMessageEditorTab {
 		
 		if (startContent > 0) {
 			try {
+				String stringToParse = httpContent.substring(startContent) + 4;
 				StringBuilder display = new StringBuilder();
-				EndpointResult result = EndpointFinder.getEndpoints(httpContent.substring(startContent) + 4);
+				EndpointResult result = EndpointFinder.getEndpoints(stringToParse);
 				List<EndpointEntry> entries = result.getEntries();
 				
 				display.append("Results (" + entries.size() + ")");
 				
 				for (EndpointEntry entry : entries) {
-					display.append("\n\n--------------------\n\n");
-					display.append("Path : " + entry.getPath());
+					display.append("--------------------\n\n");
+					display.append("Path : " + entry.getPath() + "\n");
+					
+					
+					if (entry.getUnknownPosition().size() > 0) {
+						int positionNumber = 1;
+						for (Position pos : entry.getUnknownPosition()) {
+							String formatUnknowInfo = "Variable #%d : %s (start: %d, end: %d)\n";
+							display.append(String.format(
+									formatUnknowInfo, 
+									positionNumber, 
+									stringToParse.substring(pos.getStart(), pos.getEnd()),
+									pos.getStart(),
+									pos.getEnd()
+							));
+						}
+					}
 				}
 				
 				display.append("\n\n--------------------\n\n");
