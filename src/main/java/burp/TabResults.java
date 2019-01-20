@@ -75,10 +75,10 @@ public class TabResults implements IMessageEditorTab {
 				EndpointResult result = EndpointFinder.getEndpoints(stringToParse);
 				List<EndpointEntry> entries = result.getEntries();
 				
-				display.append("Results (" + entries.size() + ")");
+				display.append("Results (" + entries.size() + ")\n\n");
 				
 				for (EndpointEntry entry : entries) {
-					display.append("--------------------\n\n");
+					display.append("--------------------\n");
 					display.append("Path : " + entry.getPath() + "\n");
 					
 					
@@ -97,12 +97,13 @@ public class TabResults implements IMessageEditorTab {
 					}
 				}
 				
-				display.append("\n\n--------------------\n\n");
+				display.append("--------------------\n\n");
 				displayContent.setText(display.toString().getBytes());
 			} catch (Exception e) {
 				String errMessage = "An error occured during the parsing of the content.\n\n";
 				errMessage += e.getMessage();
 				displayContent.setText(errMessage.getBytes());
+				e.printStackTrace();
 			}
 		} else {
 			displayContent.setText("No content found in the body.".getBytes());
